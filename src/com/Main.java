@@ -8,9 +8,8 @@ public class Main {
         String input = "";
         //printBracketToBrace(input);
 
-        S42586 s = new S42586();
-        int[] answer = s.solution(new int[] {93, 30, 55}, new int[] {1, 30, 5});
-        System.out.println(Arrays.toString(answer));
+        S43165 s = new S43165();
+        System.out.println(s.solution(new int[] {1, 1, 1, 1, 1}, 3));
     }
 
     private static void printBracketToBrace(String input){
