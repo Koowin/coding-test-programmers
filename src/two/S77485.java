@@ -1,6 +1,8 @@
+/*
+    행렬 테두리 회전하기
+    https://programmers.co.kr/learn/courses/30/lessons/77485
+ */
 package two;
-
-import java.util.Arrays;
 
 public class S77485 {
     public static void main(String[] args) {
