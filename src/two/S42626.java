@@ -8,6 +8,7 @@ package two;
 import java.util.*;
 
 public class S42626 {
+
     public int solution(int[] scoville, int K) {
         Mixer mixer = new Mixer(scoville, K);
         mixer.mixAll();
