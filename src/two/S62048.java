@@ -7,6 +7,7 @@ package two;
 
 public class S62048 {
     public long solution(int w, int h) {
+        
         int gcd;
         if (w > h) {
             gcd = getGCD(w, h);
