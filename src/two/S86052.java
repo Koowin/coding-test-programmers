@@ -10,7 +10,7 @@ class Grid{
     private static final int RIGHT = 1;
     private static final int LEFT = 2;
     private final int[][] modules;
-    
+
     public Grid(String[] str){
         int rowSize = str.length;
         int columnSize = str[0].length();
