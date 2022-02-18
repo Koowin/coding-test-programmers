@@ -23,14 +23,11 @@ class DiskController {
     private int totalJobCount = 0;
     private int totalJobTime = 0;
     private int totalDelayTime = 0;
-    private Queue<Job> remainJobs = new PriorityQueue<>(new Comparator<Job>() {
-        @Override
-        public int compare(Job o1, Job o2) {
-            if (o1.requestTime == o2.requestTime) {
-                return ((Integer) o1.jobTime).compareTo(o2.jobTime);
-            }
-            return ((Integer) o1.requestTime).compareTo(o2.requestTime);
+    private Queue<Job> remainJobs = new PriorityQueue<>((o1, o2) -> {
+        if (o1.requestTime == o2.requestTime) {
+            return ((Integer) o1.jobTime).compareTo(o2.jobTime);
         }
+        return ((Integer) o1.requestTime).compareTo(o2.requestTime);
     });
     private Queue<Job> jobPool = new PriorityQueue<>(new Comparator<Job>() {
         @Override
@@ -81,6 +78,7 @@ class DiskController {
         public Job(int requestTime, int jobTime) {
             this.requestTime = requestTime;
             this.jobTime = jobTime;
+
         }
     }
 }

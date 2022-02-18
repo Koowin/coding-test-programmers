@@ -4,20 +4,13 @@ import java.util.*;
 
 public class Test {
     public static void main(String[] args) {
-        PriorityQueue<Integer> queue = new PriorityQueue<>();
-        queue.offer(2);
-        queue.offer(1);
-        queue.offer(5);
-        queue.offer(3);
+        Queue<Integer> queue = new PriorityQueue<>();
+        queue.add(1);
+        queue.add(3);
+        queue.add(2);
+        System.out.println(queue);
 
-        for(int i : queue){
-            System.out.println(i);
-        }
+        List<Integer> test = new LinkedList<>();
 
-        System.out.println(queue.poll());
-        System.out.println(queue.poll());
-        System.out.println(queue.poll());
-        System.out.println(queue.poll());
-        System.out.println(queue.peek() <= 10);
     }
 }
