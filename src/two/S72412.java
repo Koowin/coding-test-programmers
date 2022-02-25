@@ -9,6 +9,8 @@ import java.util.*;
 public class S72412 {
     public int[] solution(String[] info, String[] query){
         int[] answer = new int[query.length];
+        Map<String, Integer> map;
+
 
         ApplicantsManager am = new ApplicantsManager();
         for(String str : info){

@@ -4,9 +4,15 @@ import java.util.*;
 
 public class Test {
     public static void main(String[] args) {
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
+        Deque<Integer> test = new LinkedList<>();
+        test.offer(1);
+        test.offer(2);
+        test.offer(3);
+        System.out.println(test);
+        for(Integer i : test){
+            System.out.println(i);
+        }
 
-        System.out.println(list);
+        List<Integer>[] list= new ArrayList[3];
     }
 }

@@ -5,15 +5,8 @@ import two.*;
 
 public class Main {
     public static void main(String[] args) {
-        String input = "[[1, 1, 1, 0], [1, 2, 2, 0], [1, 0, 0, 1], [0, 0, 0, 1], [0, 0, 0, 3], [0, 0, 0, 3]]";
-        //printBracketToBrace(input);
-
-        int[][] picture = {{1, 1, 1, 0}, {1, 2, 2, 0}, {1, 0, 0, 1}, {0, 0, 0, 1}, {0, 0, 0, 3}, {0, 0, 0, 3}};
-        S1829 s = new S1829();
-        int[] answer = s.solution(6,4,picture);
-        for(int i:answer){
-            System.out.println(i);
-        }
+        String input = "[[\"100\",\"ryan\",\"music\",\"2\"],[\"200\",\"apeach\",\"math\",\"2\"],[\"300\",\"tube\",\"computer\",\"3\"],[\"400\",\"con\",\"computer\",\"4\"],[\"500\",\"muzi\",\"music\",\"3\"],[\"600\",\"apeach\",\"music\",\"2\"]]";
+        printBracketToBrace(input);
     }
 
     private static void printBracketToBrace(String input){
