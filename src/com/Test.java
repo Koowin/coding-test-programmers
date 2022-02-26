@@ -4,15 +4,10 @@ import java.util.*;
 
 public class Test {
     public static void main(String[] args) {
-        Deque<Integer> test = new LinkedList<>();
-        test.offer(1);
-        test.offer(2);
-        test.offer(3);
-        System.out.println(test);
-        for(Integer i : test){
-            System.out.println(i);
-        }
+        Map<String, Integer> map = new HashMap<>();
+        map.put("1", 1);
+        map.put("2", 1);
 
-        List<Integer>[] list= new ArrayList[3];
+        System.out.println(map.values());
     }
 }
