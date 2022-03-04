@@ -1,3 +1,7 @@
+/*
+    스킬트리
+    https://programmers.co.kr/learn/courses/30/lessons/49993
+ */
 package two;
 
 public class S49993 {
