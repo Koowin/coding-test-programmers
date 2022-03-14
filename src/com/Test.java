@@ -6,8 +6,7 @@ import java.util.stream.Stream;
 
 public class Test {
     public static void main(String[] args){
-        String str = "CC#BCC#BCC#BCC#B";
-        System.out.println(sharpParser(str));
+
     }
     private static String sharpParser(String str){
         StringBuilder sb = new StringBuilder(str);
