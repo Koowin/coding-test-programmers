@@ -1,120 +1,95 @@
+/*
+    양궁대회
+    https://programmers.co.kr/learn/courses/30/lessons/92342
+ */
 package two;
 
 import java.util.*;
 
 public class S92342 {
     public int[] solution(int n, int[] info) {
-        ScoreMaxer scoreMaxer = new ScoreMaxer(n, info);
-        scoreMaxer.calculateArrowValues();
-        scoreMaxer.findAnswer();
-        return scoreMaxer.getAnswer();
+        MaxScoreFinder msf = new MaxScoreFinder(n, info);
+        return msf.getAnswer();
     }
 }
 
+class MaxScoreFinder {
+    private final int MAX_ARROW;
+    private final int LION_SCORE;
 
-class ScoreMaxer{
-    private static final int SCORE_ARRAY_SIZE = 11;
-    private final int sumOfArrows;
+    private GettableScore[] scores = new GettableScore[11];
+    private boolean[] isUsed = new boolean[11];
 
-    private final int[] apeachArrows;
+    private int maxScore = 0;
+    private boolean[] maxScoreCombination = new boolean[11];
 
-    private int[] answer = new int[SCORE_ARRAY_SIZE];
-    private int arrowCount = 0;
+    public MaxScoreFinder(int n, int[] info) {
+        MAX_ARROW = n;
+        int lionScore = 0;
 
-    private ArrowValue[] arrowValueList = new ArrowValue[SCORE_ARRAY_SIZE];
-
-    public ScoreMaxer(int n, int[] info){
-        sumOfArrows = n;
-        apeachArrows = info;
-    }
-
-    public void calculateArrowValues(){
-        int MAX_SCORE = 10;
-        for(int i=0;i<SCORE_ARRAY_SIZE;i++){
-            int score = MAX_SCORE - i;
-            int requiredArrow = apeachArrows[i] + 1;
-            arrowValueList[i] = new ArrowValue(score, requiredArrow);
-        }
-    }
-
-    public void findAnswer(){
-        int MAX_SCORE = 10;
-
-        Arrays.sort(arrowValueList);
-
-        for(ArrowValue value : arrowValueList){
-            if(arrowCount + value.requiredArrow <= sumOfArrows){
-                int index = MAX_SCORE - value.score;
-                answer[index] = value.requiredArrow;
-                arrowCount += value.requiredArrow;
+        for (int i = 0; i < 11; i++) {
+            int score = 10 - i;
+            if(info[i] > 0){
+                lionScore -= score;
             }
+            scores[i] = new GettableScore(info[i], score);
         }
-
-        System.out.print("[");
-        for(int i : answer){
-            System.out.print(i + ",");
-        }
-        System.out.println("\b]");
-        if(isLionWin()){
-            remainArrowAdder();
-        }
-        else{
-            answer = new int[] {-1};
-        }
-    }
-
-    private boolean isLionWin(){
-        int MAX_SCORE = 10;
-        int scoreDiff = 0;
-
-        for(int i=0;i<SCORE_ARRAY_SIZE;i++){
-            if(answer[i] > apeachArrows[i]){
-                scoreDiff += ((MAX_SCORE-i) * 2);
-            }
-            else if(apeachArrows[i] != 0){
-                scoreDiff -= ((MAX_SCORE-i) * 2);
-            }
-        }
-        if(scoreDiff > 0){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-    private void remainArrowAdder(){
-        if(arrowCount < sumOfArrows){
-            answer[10] += (sumOfArrows - arrowCount);
-        }
+        LION_SCORE = lionScore;
     }
 
     public int[] getAnswer(){
-        return answer;
+        dfs(10, LION_SCORE, MAX_ARROW);
+        if(maxScore > 0){
+            return makeArrowList();
+        }
+        else{
+            return new int[] {-1};
+        }
     }
 
-    static class ArrowValue implements Comparable<ArrowValue>{
-        private final int score;
-        private final int requiredArrow;
-        private final double arrowValue;
-
-        private ArrowValue(int s, int n){
-            score = s;
-            requiredArrow = n;
-            if(requiredArrow == 1){
-                arrowValue = (double) s / n;
+    private void dfs(int index, int score, int remainArrow){
+        if(index == -1){
+            if(maxScore < score) {
+                maxScore = score;
+                maxScoreCombination = Arrays.copyOf(isUsed, isUsed.length);
             }
-            else {
-                arrowValue = ((double) s * 2) / n;
-            }
+            return;
         }
 
-        @Override
-        public int compareTo(ArrowValue o){
-            if(arrowValue == o.arrowValue){
-                return Integer.compare(score, o.score);
+        if(remainArrow >= scores[index].needArrow) {
+            isUsed[index] = true;
+            dfs(index - 1, score + scores[index].score, remainArrow - scores[index].needArrow);
+            isUsed[index] = false;
+        }
+        dfs(index - 1, score, remainArrow);
+    }
+
+    private int[] makeArrowList(){
+        int[] ret = new int[11];
+        int arrowCount = 0;
+
+        for(int i=0;i<11;i++){
+            if(maxScoreCombination[i]){
+                arrowCount += scores[i].needArrow;
+                ret[i] = scores[i].needArrow;
             }
-            return Double.compare(o.arrowValue, arrowValue);
+        }
+        if(arrowCount < MAX_ARROW){
+            ret[10] += (MAX_ARROW - arrowCount);
+        }
+        return ret;
+    }
+
+    static class GettableScore{
+        private final int needArrow;
+        private final int score;
+
+        private GettableScore(int apeachArrow, int score){
+            needArrow = apeachArrow + 1;
+            if(apeachArrow != 0){
+                score *= 2;
+            }
+            this.score = score;
         }
     }
 }
