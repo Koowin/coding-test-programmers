@@ -8,7 +8,7 @@ import java.util.*;
 
 public class S49189 {
     public int solution(int n, int[][] edge) {
-        int answer = 0;
+        final int answer = 0;
 
         Graph graph = new Graph(n);
         for(int[] e : edge){
