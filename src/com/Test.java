@@ -6,22 +6,13 @@ import java.util.stream.Stream;
 
 public class Test {
     public static void main(String[] args){
-        Deque<Integer> stack = new LinkedList<>();
+        List<Integer> test = new LinkedList<>();
+        test.add(1);
+        test.add(2);
+        test.add(3);
+        test.add(4);
 
-        stack.push(0);
-        stack.push(1);
-        stack.push(2);
-        stack.push(3);
-
-        System.out.println(stack);
-        System.out.println(stack.peek());
-        for(int i : stack){
-            System.out.println(i);
-        }
-
-        for(int i = 0, size = stack.size() / 2; i < size ; i++){
-            stack.pop();
-        }
-        System.out.println(stack.peek());
+        test.remove(3);
+        System.out.println(test);
     }
 }
