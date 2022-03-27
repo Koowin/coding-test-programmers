@@ -14,5 +14,10 @@ public class Test {
         String format = "%02d:%02d";
         System.out.println(String.format(format, i, j));
 
+        Queue<Integer> heap = new PriorityQueue<Integer>(Collections.reverseOrder());
+        heap.remove(1);
+
+        Deque<Integer> deque = new LinkedList<>();
+
     }
 }
