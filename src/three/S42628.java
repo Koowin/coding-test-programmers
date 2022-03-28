@@ -16,12 +16,10 @@ public class S42628 {
             if (operation.charAt(0) == 'I') {
                 int num = Integer.parseInt(operation.substring(2, operation.length()));
                 addNumber(num);
-            }
-            else {
+            } else {
                 if (operation.length() == 3) {
                     deleteMax();
-                }
-                else {
+                } else {
                     deleteMin();
                 }
             }
