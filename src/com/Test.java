@@ -11,28 +11,7 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-
-
-        int i = 1;
-        int j = 2;
-        String format = "%02d:%02d";
-        System.out.println(String.format(format, i, j));
-
-        Queue<Integer> heap = new PriorityQueue<Integer>(Collections.reverseOrder());
-        heap.remove(1);
-
-        set.add(2);
-        set.add(4);
-        set.add(6);
-        set.add(8);
-
-        Iterator<Integer> iter = set.iterator();
-        while(iter.hasNext()){
-            if(iter.next() % 2 == 0){
-                System.out.println(iter.toString());
-                iter.remove();
-            }
-        }
-        System.out.println(set);
+        int i = 7;
+        System.out.println(i & 1<<2);
     }
 }
