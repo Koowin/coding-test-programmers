@@ -11,7 +11,7 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        int i = 7;
-        System.out.println(i & 1<<2);
+        char c = 'A';
+        System.out.println(++c);
     }
 }
