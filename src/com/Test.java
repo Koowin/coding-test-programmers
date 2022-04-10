@@ -11,7 +11,7 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        int[] arr = {1, 2, 3, 3};
-        System.out.println(Arrays.stream(arr).max().getAsInt());
+        double a = 200.5;
+        System.out.println(Math.round(a));
     }
 }
