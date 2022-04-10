@@ -11,7 +11,7 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        char c = 'A';
-        System.out.println(++c);
+        int[] arr = {1, 2, 3, 3};
+        System.out.println(Arrays.stream(arr).max().getAsInt());
     }
 }
