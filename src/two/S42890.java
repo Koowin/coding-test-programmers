@@ -1,62 +1,92 @@
+/*
+    https://programmers.co.kr/learn/courses/30/lessons/42890
+    후보키
+ */
 package two;
 
 import java.util.*;
 
 public class S42890 {
-    public static void main(String[] args) {
-        String[][] relation = {{"100","ryan","music","2"},{"200","apeach","math","2"},{"300","tube","computer","3"},{"400","con","computer","4"},{"500","muzi","music","3"},{"600","apeach","music","2"}};
-        KeyFinder kf = new KeyFinder(relation);
-    }
     public int solution(String[][] relation) {
-        KeyFinder kf = new KeyFinder(relation);
-        return 0;
+        Database db = new Database(relation);
+        return db.getCandidateKeyCount();
     }
-}
 
-class KeyFinder {
-    private int[][] data;
-    private final int ROW_SIZE;
-    private final int COL_SIZE;
+    static class Database {
+        long[][] database;
 
-    public KeyFinder(String[][] relation){
-        ROW_SIZE = relation.length;
-        COL_SIZE = relation[0].length;
+        private Database(String[][] relation) {
+            parseData(relation);
+        }
 
-        data = new int[ROW_SIZE][COL_SIZE];
-
-        for(int j=0;j<COL_SIZE;j++){
-            Map<String, Integer> map = new HashMap<>();
-            int index = 0;
-            for(int i=0;i<ROW_SIZE;i++){
-                if(map.keySet().contains(relation[i][j])){
-                    data[i][j] = map.get(relation[i][j]);
+        private void parseData(String[][] relation) {
+            database = new long[relation.length][relation[0].length];
+            for (int col = 0; col < database[0].length; col++) {
+                Map<String, Integer> map = new HashMap<>();
+                int nextId = 0;
+                for (int row = 0; row < database.length; row++) {
+                    Integer id = map.get(relation[row][col]);
+                    if (id == null) {
+                        id = nextId++;
+                        map.put(relation[row][col], id);
+                    }
+                    database[row][col] = id;
                 }
-                else{
-                    data[i][j] = index;
-                    map.put(relation[i][j], index++);
+            }
+
+            int shiftOffset = 5;
+            for (int col = 1; col < database[0].length; col++) {
+                for (int row = 0; row < database.length; row++) {
+                    database[row][col] <<= shiftOffset;
                 }
+                shiftOffset += 5;
             }
         }
 
-        print();
-    }
+        private int getCandidateKeyCount() {
+            Set<Integer> candidateKeys = new HashSet<>();
 
-    private void print(){
-        for(int[] arr : data){
-            for(int i : arr){
-                System.out.print(i + " ");
+            int len = 1 << database[0].length;
+            for (int i = 0; i < len; i++) {
+                if (isUniqueness(i)) {
+                    candidateKeys.add(i);
+                }
             }
-            System.out.println();
+            minimality(candidateKeys);
+            return candidateKeys.size();
         }
-    }
 
-    static class ColumnManager {
-        private boolean[] isUsed;
-        private int isUsedCount = 0;
-        private final int COL_SIZE;
+        private boolean isUniqueness(int key) {
+            Set<Long> set = new HashSet<>();
+            long[] rows = new long[database.length];
+            int col = 1;
+            for (int i = 0; i < 8; i++) {
+                if ((key & col) != 0) {
+                    for (int j = 0; j < database.length; j++) {
+                        rows[j] |= database[j][i];
+                    }
+                }
+                col <<= 1;
+            }
 
-        private ColumnManager(int size){
-            this.COL_SIZE = size;
+            for (long l : rows) {
+                if (!set.add(l)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private void minimality(Set<Integer> set) {
+            for (Iterator<Integer> i = set.iterator(); i.hasNext(); ) {
+                int key = i.next();
+                for (int o : set) {
+                    if (key != o && (key & o) == o) {
+                        i.remove();
+                        break;
+                    }
+                }
+            }
         }
     }
 }

@@ -11,7 +11,6 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        double a = 200.5;
-        System.out.println(Math.round(a));
+        System.out.println(set.add(1));
     }
 }
