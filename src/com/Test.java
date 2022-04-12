@@ -13,17 +13,9 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-
-    }
-
-    static class Test1 {
-        private int i = 1;
-    }
-
-    static class Test2 {
-        private void foo() {
-            Test1 t = new Test1();
-            System.out.println(t.i);
-        }
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        pq.add(1);
+        pq.add(3);
+        System.out.println(pq.poll());
     }
 }
