@@ -1,6 +1,8 @@
 package com;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.*;
 import java.util.stream.Stream;
 
@@ -11,6 +13,17 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        System.out.println(set.add(1));
+
+    }
+
+    static class Test1 {
+        private int i = 1;
+    }
+
+    static class Test2 {
+        private void foo() {
+            Test1 t = new Test1();
+            System.out.println(t.i);
+        }
     }
 }
