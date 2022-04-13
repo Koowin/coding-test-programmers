@@ -13,9 +13,8 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
-        pq.add(1);
-        pq.add(3);
-        System.out.println(pq.poll());
+        StringBuilder sb = new StringBuilder("423");
+        sb.append(new StringBuilder("123"));
+        
     }
 }
