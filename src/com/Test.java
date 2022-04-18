@@ -13,10 +13,5 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        StringBuilder sb = new StringBuilder("0123456");
-        for (int i = 0; i < sb.length(); i++) {
-            sb.deleteCharAt(i);
-        }
-        System.out.println(sb);
     }
 }
