@@ -9,25 +9,26 @@ import java.util.*;
 
 public class S77484 {
     public int[] solution(int[] lottos, int[] win_nums) {
-        int[] answer = {0, 0};
-        int count = 0;
-        int zero_count = 0;
-        Arrays.sort(lottos);
-        Arrays.sort(win_nums);
-        for (int num : lottos) {
-            if (num != 0) {
-                for (int win_num : win_nums) {
-                    if (num == win_num) {
-                        count++;
-                        break;
-                    }
-                }
-            } else {
-                zero_count++;
+        final int[] hitRank = {6, 6, 5, 4, 3, 2, 1};
+
+        Set<Integer> lottoNumbers = new HashSet<>();
+        for (int i : win_nums) {
+            lottoNumbers.add(i);
+        }
+
+        int zeroCount = 0;
+        int hitCount = 0;
+        for (int i : lottos) {
+            if (i == 0) {
+                zeroCount++;
+            } else if (lottoNumbers.contains(i)) {
+                hitCount++;
             }
         }
-        answer[0] = Math.min(7 - (count + zero_count), 6);
-        answer[1] = Math.min(7 - count, 6);
+
+        int[] answer = new int[2];
+        answer[0] = hitRank[zeroCount + hitCount];
+        answer[1] = hitRank[hitCount];
         return answer;
     }
 }

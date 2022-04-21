@@ -1,64 +1,65 @@
 /*
     신규 아이디 추천
     https://programmers.co.kr/learn/courses/30/lessons/72410
-    
-    정규식을 알지 못할 때 풀이한 것. 수정 필요
  */
 
 package one;
 
 public class S72410 {
     public String solution(String new_id) {
-        StringBuilder stringBuilder = new StringBuilder();
-        int len = new_id.length();
-        for (int i = 0; i < len; i++) {
-            char ch = new_id.charAt(i);
-            if (ch >= 'A' && ch <= 'Z') {
-                stringBuilder.append((char) (ch + 32));
-                continue;
+        String ret = new_id;
+        for (Process process : Process.values()) {
+            ret = process.apply(ret);
+        }
+        return ret;
+    }
+
+    enum Process {
+        ONE {
+            @Override
+            public String apply(String string) {
+                return string.toLowerCase();
             }
-            if ((ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9')) {
-                stringBuilder.append(ch);
-                continue;
+        }, TWO {
+            @Override
+            public String apply(String string) {
+                return string.replaceAll("[^a-z0-9\\-_.]", "");
             }
-            if ((ch == '-') || (ch == '_')) {
-                stringBuilder.append(ch);
-                continue;
+        }, THREE {
+            @Override
+            public String apply(String string) {
+                return string.replaceAll("\\.{2,}", ".");
             }
-            if (ch == '.') {
-                if (stringBuilder.length() == 0) {
-                    continue;
-                } else if (stringBuilder.charAt(stringBuilder.length() - 1) == '.') {
-                    continue;
-                } else {
-                    stringBuilder.append(ch);
+        }, FOUR {
+            @Override
+            public String apply(String string) {
+                return string.replaceAll("^\\.+", "").replaceAll("\\.+$", "");
+            }
+        }, FIVE {
+            @Override
+            public String apply(String string) {
+                return string.isEmpty() ? "a" : string;
+            }
+        }, SIX {
+            @Override
+            public String apply(String string) {
+                return string.length() >= 16 ? string.substring(0, 15).replaceAll("\\.+$", "") : string;
+            }
+        }, SEVEN {
+            @Override
+            public String apply(String string) {
+                int len = string.length();
+                if (len > 2) {
+                    return string;
                 }
+                char c = string.charAt(len - 1);
+                for (int i = len; i < 3; i++) {
+                    string += c;
+                }
+                return string;
             }
-        }
+        };
 
-
-        if (stringBuilder.length() > 15) {
-            stringBuilder.delete(15, stringBuilder.length());
-        }
-
-        int j = stringBuilder.length() - 1;
-        for (; j > 0; j--) {
-            if (stringBuilder.charAt(j) != '.') {
-                break;
-            }
-        }
-        stringBuilder.delete(j + 1, stringBuilder.length());
-
-        int len2 = stringBuilder.length();
-        if (len2 == 0) {
-            stringBuilder.append("aaa");
-        } else if (len2 < 3) {
-            char lastChar = stringBuilder.charAt(len2 - 1);
-            for (int i = 0; i < (3 - len2); i++) {
-                stringBuilder.append(lastChar);
-            }
-        }
-
-        return stringBuilder.toString();
+        public abstract String apply(String string);
     }
 }

@@ -13,11 +13,6 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-
-        Map<Integer, String> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put(3, "one");
-        linkedHashMap.put(1, "three");
-        System.out.println(linkedHashMap.values());
-
+        System.out.println("..123....".replaceAll("^\\.+", "").replaceAll("\\.+$", "aa"));
     }
 }
