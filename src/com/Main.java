@@ -5,9 +5,7 @@ import two.*;
 
 public class Main {
     public static void main(String[] args) {
-        String input = "[](){}";
-        S76502 s = new S76502();
-        System.out.println(s.solution(input));
+        printBracketToBrace("[[8,5],[6,7],[4,1]]");
     }
 
     private static void printBracketToBrace(String input){
