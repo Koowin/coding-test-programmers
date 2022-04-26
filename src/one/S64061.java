@@ -7,40 +7,57 @@ package one;
 import java.util.*;
 
 public class S64061 {
+    Deque<Integer>[] stacks;
     public int solution(int[][] board, int[] moves) {
-        int answer = 0;
-        int len = board[0].length;
-        Stack<Integer>[] stacks = new Stack[len];
-        Stack<Integer> basket = new Stack<>();
-
-        for (int i = 0; i < len; i++) {
-            stacks[i] = new Stack<>();
-        }
-        for (int i = len - 1; i >= 0; i--) {
-            for (int j = 0; j < len; j++) {
-                System.out.print(board[i][j] + " ");
-                if (board[i][j] != 0) {
-                    stacks[j].push(board[i][j]);
-                }
+        initStacks(board);
+        Basket basket = new Basket();
+        for (int i : moves) {
+            int item = getItem(i);
+            if (item != -1) {
+                basket.addItem(item);
             }
-            System.out.println();
         }
+        return basket.count;
+    }
 
-        for (int move : moves) {
-            if (stacks[move - 1].isEmpty())
-                continue;
-            int selected = stacks[move - 1].pop();
-            if (basket.isEmpty())
-                basket.push(selected);
-            else {
-                if (basket.peek() == selected) {
-                    basket.pop();
-                    answer += 2;
+    private void initStacks(int[][] board) {
+        stacks = new Deque[board.length];
+        for (int i = 0; i < stacks.length; i++) {
+            stacks[i] = new ArrayDeque<>();
+        }
+        for (int i = 0; i < board.length; i++) {
+            for (int j = board.length - 1; j >= 0; j--) {
+                if (board[j][i] != 0) {
+                    stacks[i].push(board[j][i]);
                 } else {
-                    basket.push(selected);
+                    break;
                 }
             }
         }
-        return answer;
+    }
+
+    private int getItem(int index) {
+        if (stacks[--index].isEmpty()) {
+            return -1;
+        }
+        return stacks[index].pop();
+    }
+
+    static class Basket {
+        private int count = 0;
+        private Deque<Integer> stack = new ArrayDeque<>();
+
+        private void addItem(int n) {
+            if (stack.isEmpty()) {
+                stack.push(n);
+                return;
+            }
+            if (stack.peek() == n) {
+                count+=2;
+                stack.pop();
+            } else {
+                stack.push(n);
+            }
+        }
     }
 }

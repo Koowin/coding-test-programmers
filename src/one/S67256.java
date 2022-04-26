@@ -7,64 +7,82 @@ package one;
 
 public class S67256 {
     public String solution(int[] numbers, String hand) {
-        StringBuilder sb = new StringBuilder();
-        boolean isRight = false;
-        if(hand.equals("right")){
-            isRight = true;
+        StringBuilder stringBuilder = new StringBuilder();
+        Fingers fingers = new Fingers(hand);
+        for (int i : numbers) {
+            stringBuilder.append(fingers.move(i));
         }
-        Point[] points = new Point[12];
-        for(int i=0;i<9;i++){
-            points[i+1] = new Point(i%3, i/3);
-        }
-        points[0] = new Point(1, 3);
-        points[10] = new Point(0, 3);
-        points[11] = new Point(2, 3);
-        int l = 10;
-        int r = 11;
-        for(int number : numbers){
-            if(number != 0 && number % 3 == 1){
-                l = number;
-                sb.append('L');
-            }
-            else if(number != 0 && number % 3 == 0){
-                r = number;
-                sb.append('R');
-            }
-            else{
-                int diff_l = points[l].getDistance(points[number]);
-                int diff_r = points[r].getDistance(points[number]);
-
-                if(diff_l < diff_r){
-                    l = number;
-                    sb.append('L');
-                }
-                else if(diff_l >diff_r){
-                    r = number;
-                    sb.append('R');
-                }
-                else{
-                    if(isRight){
-                        r = number;
-                        sb.append('R');
-                    }
-                    else{
-                        l = number;
-                        sb.append('L');
-                    }
-                }
-            }
-        }
-        return sb.toString();
+        return stringBuilder.toString();
     }
-    private class Point{
-        public int x;
-        public int y;
-        Point(int x, int y){
-            this.x = x;
-            this.y = y;
+
+    static class KeyPad {
+        private final int r;
+        private final int c;
+
+        public KeyPad(int r, int c) {
+            this.r = r;
+            this.c = c;
         }
-        public int getDistance(Point target){
-            return Math.abs(this.x - target.x) + Math.abs(this.y - target.y);
+    }
+
+    static class Fingers {
+        private static final char LEFT = 'L';
+        private static final char RIGHT = 'R';
+
+        private KeyPad[] pads = new KeyPad[10];
+        private KeyPad leftFinger = new KeyPad(3, 0);
+        private KeyPad rightFinger = new KeyPad(3, 2);
+
+        private final boolean priorityLeftHand;
+
+        private Fingers(String priority) {
+            if (priority.equals("left")) {
+                priorityLeftHand = true;
+            } else {
+                priorityLeftHand = false;
+            }
+            initKeyPads();
+        }
+
+        private void initKeyPads() {
+            pads[0] = new KeyPad(3, 1);
+            for (int i = 0; i < 9; i++) {
+                int r = i / 3;
+                int c = i % 3;
+                pads[i + 1] = new KeyPad(r, c);
+            }
+        }
+
+        private char move(int n) {
+            if (isMoveLeft(n)) {
+                leftFinger = pads[n];
+                return LEFT;
+            } else {
+                rightFinger = pads[n];
+                return RIGHT;
+            }
+        }
+
+        private boolean isMoveLeft(int n) {
+            KeyPad target = pads[n];
+            if (target.c == 1) {
+                int leftDistance = getDistance(leftFinger, target);
+                int rightDistance = getDistance(rightFinger, target);
+                if (leftDistance > rightDistance) {
+                    return false;
+                } else if (leftDistance < rightDistance) {
+                    return true;
+                }
+                return priorityLeftHand;
+            }
+            return target.c == 0;
+        }
+
+        private int getDistance(KeyPad from, KeyPad to) {
+            int ret = 0;
+            ret += Math.abs(from.r - to.r);
+            ret += Math.abs(from.c - to.c);
+            return ret;
         }
     }
 }

@@ -13,20 +13,9 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(4);
-
-        for (Iterator<Integer> iter = list.iterator(); iter.hasNext(); ) {
-            int i = iter.next();
-            System.out.println(i);
-            if (i == 3) {
-                iter.remove();
-            }
-            if (i == 4) {
-                list.add(5);
-            }
-        }
+        Deque<Integer> stack = new ArrayDeque<>();
+        stack.push(1);
+        stack.push(2);
+        System.out.println(stack.peek());
     }
 }
