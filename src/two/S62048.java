@@ -7,25 +7,20 @@ package two;
 
 public class S62048 {
     public long solution(int w, int h) {
-        
-        int gcd;
-        if (w > h) {
-            gcd = getGCD(w, h);
-        } else {
-            gcd = getGCD(h, w);
-        }
+        int gcd = gcd(w, h);
         int mw = w / gcd;
-        int mh = h / gcd;
+        int hw = h / gcd;
 
-        long ret = (long) w * h - (long) gcd * (mw + mh - 1);
-        return ret;
+        long answer = (long) w * (h - hw);
+        answer += (long) gcd * (mw - 1) * (hw - 1);
+        return answer;
     }
 
-    private int getGCD(int B, int S) {
-        int r = B % S;
+    private int gcd(int a, int b) {
+        int r = a % b;
         if (r == 0) {
-            return S;
+            return b;
         }
-        return getGCD(S, r);
+        return gcd(b, r);
     }
 }

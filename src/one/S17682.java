@@ -5,40 +5,57 @@
 
 package one;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class S17682 {
     public int solution(String dartResult) {
-        int[] scores = new int[4];
-        String scoreString = dartResult.replaceAll("[#*]", "");
-        String[] onlyNumbers = scoreString.split("[SDT]");
-        String[] allStringArr = dartResult.split("");
-
-        int i = 1;
-        for (String num : onlyNumbers) {
-            scores[i] = Integer.parseInt(num);
-            i++;
+        Pattern pattern = Pattern.compile("\\d+[SDT][*#]?");
+        Matcher matcher = pattern.matcher(dartResult);
+        for (int i = 0; i < 3; i++) {
+            matcher.find();
+            Score.scores[i] = new Score(matcher.group(), i);
         }
+        int answer = 0;
+        for (Score s : Score.scores) {
+            answer += s.score;
+        }
+        return answer;
+    }
 
-        i = 0;
-        for (String ch : allStringArr) {
-            if (ch.matches("[SDT]")) {
+    static class Score {
+        private static Score[] scores = new Score[3];
+        private int score;
+
+        private Score(String str, int index) {
+            int i = 1;
+            if (str.charAt(i) == '0') {
                 i++;
-                if (ch.equals("D")) {
-                    scores[i] = scores[i] * scores[i];
-                } else if (ch.equals("T")) {
-                    scores[i] = scores[i] * scores[i] * scores[i];
-                }
             }
-            if (ch.matches("[*#]")) {
-                if (ch.equals("*")) {
-                    scores[i - 1] = scores[i - 1] * 2;
-                    scores[i] = scores[i] * 2;
-                } else {
-                    scores[i] = scores[i] * (-1);
-                }
+            score = Integer.parseInt(str.substring(0, i));
+            multipleScore(str.charAt(i++));
+            if (i < str.length()) {
+                calculateAward(str.charAt(i), index);
             }
         }
 
-        return scores[1] + scores[2] + scores[3];
+        private void multipleScore(char c) {
+            if (c == 'D') {
+                score *= score;
+            } else if (c == 'T') {
+                score = score * score * score;
+            }
+        }
 
+        private void calculateAward(char c, int index) {
+            if (c == '#') {
+                score *= -1;
+            } else {
+                score *= 2;
+                if (index > 0) {
+                    scores[index-1].score *= 2;
+                }
+            }
+        }
     }
 }

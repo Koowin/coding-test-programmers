@@ -7,63 +7,121 @@ package two;
 import java.util.*;
 
 public class S1835 {
+
+    private int[] sequence = new int[8];
+    private List<Condition> conditions = new ArrayList<>();
+
     public int solution(int n, String[] data) {
-        Sequence s = new Sequence(data);
-        s.dfs(0,new ArrayList<Character>());
-        return s.getAnswer();
+        initMap();
+        initCondition(data);
+
+        return count(0,0);
     }
-    static class Sequence{
-        private int answer = 0;
-        private final String[] restrictions;
-        private final Character[] members = {'A', 'C', 'F', 'J', 'M', 'N', 'R', 'T'};
 
-        Sequence(String[] data){
-            this.restrictions = data;
+    private void initMap() {
+        Condition.friendMap.put('A', 0);
+        Condition.friendMap.put('C', 1);
+        Condition.friendMap.put('F', 2);
+        Condition.friendMap.put('J', 3);
+        Condition.friendMap.put('M', 4);
+        Condition.friendMap.put('N', 5);
+        Condition.friendMap.put('R', 6);
+        Condition.friendMap.put('T', 7);
+    }
+
+    private void initCondition(String[] data) {
+        for (String str : data) {
+            conditions.add(new Condition(str));
         }
+    }
 
-        private void dfs(int count, ArrayList<Character> seq){
-            if(seq.size() == 8){
-                checkRestriction(seq);
-                return;
-            }
-
-            for(Character member : members){
-                if(!seq.contains(member)){
-                    ArrayList<Character> ret = (ArrayList<Character>) seq.clone();
-                    ret.add(member);
-                    dfs(count+1, ret);
+    private int count(int index, int usedSet) {
+        if (index == 8) {
+            for (Condition c : conditions) {
+                if (!c.isMeet(sequence, usedSet)) {
+                    return 0;
                 }
             }
+            return 1;
+        }
+        for (Condition c : conditions) {
+            if (!c.isMeet(sequence, usedSet)) {
+                return 0;
+            }
+        }
+        int ret = 0;
+        for (int i = 0, offset = 1; i < 8; i++, offset <<= 1) {
+            if ((usedSet & offset) == 0) {
+                sequence[index] = i;
+                ret += count(index + 1, usedSet | offset);
+            }
+        }
+        return ret;
+    }
+
+    static class Condition {
+        private static Map<Character, Integer> friendMap = new HashMap<>();
+        private static final int OFFSET = '0' - 1;
+        private final int f1;
+        private final int f2;
+        private final int len;
+        private final Type type;
+
+        private Condition(String str) {
+            f1 = friendMap.get(str.charAt(0));
+            f2 = friendMap.get(str.charAt(2));
+            len = str.charAt(4) - OFFSET;
+            type = Type.findByChar(str.charAt(3));
         }
 
-        private void checkRestriction(ArrayList<Character> seq){
-            for(String restriction : restrictions){
-                char a = restriction.charAt(0);
-                char b = restriction.charAt(2);
-                char op = restriction.charAt(3);
-                int gap = restriction.charAt(4) - '0';
-                int ai = seq.indexOf(a);
-                int bi = seq.indexOf(b);
-                int realGap = Math.abs(ai - bi) - 1;
+        private boolean isMeet(int[] sequence, int used) {
+            if ((used & 1 << f1) == 0 || (used & 1 << f2) == 0) {
+                return true;
+            }
+            int loc1 = findLoc(f1, sequence);
+            int loc2 = findLoc(f2, sequence);
+            return type.isMeet(Math.abs(loc1 - loc2), len);
+        }
 
-                if(op == '>'){
-                    if(realGap <= gap){
-                        return;
-                    }
-                }else if(op == '<'){
-                    if(realGap >= gap){
-                        return;
-                    }
-                }else if(realGap != gap){
-                    return;
+        private static int findLoc(int friend, int[] sequence) {
+            int i = 0;
+            for (; i < 8; i++) {
+                if (sequence[i] == friend) {
+                    break;
                 }
             }
-            answer++;
+            return i;
         }
 
+        enum Type {
+            EQUAL {
+                @Override
+                public boolean isMeet(int a, int b) {
+                    return a == b;
+                }
+            }, CLOSER {
+                @Override
+                public boolean isMeet(int a, int b) {
+                    return a < b;
+                }
+            }, FAR {
+                @Override
+                public boolean isMeet(int a, int b) {
+                    return a > b;
+                }
+            };
 
-        private int getAnswer(){
-            return answer;
+            public static Type findByChar(char c) {
+                if (c == '=') {
+                    return EQUAL;
+                } else if (c == '<') {
+                    return CLOSER;
+                } else {
+                    return FAR;
+                }
+            }
+
+            public abstract boolean isMeet(int a, int b);
         }
     }
 }

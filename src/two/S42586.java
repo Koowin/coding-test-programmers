@@ -9,38 +9,31 @@ import java.util.*;
 
 public class S42586 {
     public int[] solution(int[] progresses, int[] speeds) {
-        Release r = new Release();
-        for(int i=0, size = speeds.length;i<size;i++){
-            r.addWork(progresses[i], speeds[i]);
+        int[] days = new int[progresses.length];
+        for (int i = 0; i < progresses.length; i++) {
+            days[i] = getDay(progresses[i], speeds[i]);
         }
-        int[] answer = new int[r.releaseDate.size()-1];
-        for(int i=0, size=answer.length;i<size;i++){
-            answer[i] = r.workCount[r.releaseDate.elementAt(i+1)];
+        List<Integer> answer = new ArrayList<>();
+        int count = 0;
+        int max = days[0];
+        for (int day : days) {
+            if (day > max) {
+                answer.add(count);
+                max = day;
+                count = 0;
+            }
+            count++;
         }
-        return answer;
+        answer.add(count);
+        return answer.stream().mapToInt(o -> o).toArray();
     }
-    class Release{
-        Stack<Integer> releaseDate = new Stack<>();
-        int[] workCount = new int[100];
 
-        Release(){
-            releaseDate.push(0);
+    private int getDay(int progress, int speed) {
+        int left = 100 - progress;
+        int day = left / speed;
+        if (left % speed != 0) {
+            day++;
         }
-
-        private void addWork(int progress, int speed){
-            int remainProgress = 100 - progress;
-            int day = remainProgress / speed;
-            if(remainProgress % speed != 0){
-                day++;
-            }
-
-            if(releaseDate.peek() < day){
-                releaseDate.push(day);
-            }
-            else{
-                day = releaseDate.peek();
-            }
-            workCount[day]++;
-        }
+        return day;
     }
 }

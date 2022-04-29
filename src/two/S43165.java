@@ -6,29 +6,25 @@
 package two;
 
 public class S43165 {
-    int answer = 0;
-    int size;
-    int[] numbers;
-    int target;
+    private int answer = 0;
+    private int[] numbers;
+    private int target;
 
     public int solution(int[] numbers, int target) {
-        size = numbers.length;
         this.numbers = numbers;
         this.target = target;
-
-        makeTarget(0, 0);
-
+        count(0, 0);
         return answer;
     }
 
-    private void makeTarget(int loopCount, int val) {
-        if (loopCount == size) {
-            if (val == target) {
+    private void count(int index, int sum) {
+        if (index == numbers.length) {
+            if (sum == target) {
                 answer++;
             }
-        } else {
-            makeTarget(loopCount + 1, val + numbers[loopCount]);
-            makeTarget(loopCount + 1, val - numbers[loopCount]);
+            return;
         }
+        count(index + 1, sum + numbers[index]);
+        count(index + 1, sum - numbers[index]);
     }
 }

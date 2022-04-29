@@ -8,43 +8,23 @@ package two;
 import java.util.*;
 
 public class S42626 {
+    private PriorityQueue<Integer> priorityQueue = new PriorityQueue<>();
 
     public int solution(int[] scoville, int K) {
-        Mixer mixer = new Mixer(scoville, K);
-        mixer.mixAll();
-        return mixer.getMixCount();
-    }
-
-    static class Mixer {
-        private PriorityQueue<Integer> pq = new PriorityQueue<>();
-        private int K;
-        private int count = 0;
-
-        Mixer(int[] scoville, int K) {
-            this.K = K;
-            for (int i : scoville) {
-                pq.add(i);
-            }
+        for (int i : scoville) {
+            priorityQueue.offer(i);
         }
-
-        private void mixAll() {
-            while (pq.size() > 1 && pq.peek() < K) {
-                mixOneTime();
-                count++;
-            }
-            if (pq.peek() < K) {
-                count = -1;
-            }
+        int count =0;
+        while (priorityQueue.size() > 1 && priorityQueue.peek() < K) {
+            int a = priorityQueue.poll();
+            int b = priorityQueue.poll();
+            int mixed = a + b * 2;
+            priorityQueue.offer(mixed);
+            count++;
         }
-
-        private void mixOneTime() {
-            int a = pq.poll();
-            int b = pq.poll();
-            pq.add(a + b * 2);
+        if (priorityQueue.size() == 1 && priorityQueue.peek() < K) {
+            return -1;
         }
-
-        private int getMixCount() {
-            return count;
-        }
+        return count;
     }
 }

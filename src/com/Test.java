@@ -13,9 +13,8 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        Deque<Integer> stack = new ArrayDeque<>();
-        stack.push(1);
-        stack.push(2);
-        System.out.println(stack.peek());
+        Pattern pattern = Pattern.compile("\\d+[SDT][*#]?");
+        Matcher matcher = pattern.matcher("1S#2D*3T");
+        matcher.group();
     }
 }

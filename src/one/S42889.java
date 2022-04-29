@@ -9,46 +9,37 @@ import java.util.*;
 
 public class S42889 {
     public int[] solution(int N, int[] stages) {
-        int[] stageChallengeCount = new int[N + 2];
-        for (int stage : stages) {
-            stageChallengeCount[stage]++;
+        int[] failCount = new int[N + 2];
+        for (int i : stages) {
+            failCount[i]++;
         }
-        ArrayList<StageAndFailRate> arr = new ArrayList<>();
-        int totalCount = stageChallengeCount[N + 1];
+
+        List<Stage> stageList = new ArrayList<>();
+        int sum = failCount[N + 1];
         for (int i = N; i > 0; i--) {
-            totalCount += stageChallengeCount[i];
-            arr.add(new StageAndFailRate(i, (double) stageChallengeCount[i] / totalCount));
+            sum += failCount[i];
+            stageList.add(new Stage(i, failCount[i], sum));
         }
-        Collections.sort(arr);
-        int[] answer = new int[N];
-        for (int i = 0; i < N; i++) {
-            answer[i] = arr.get(i).stage;
-        }
-        return answer;
+        Collections.sort(stageList);
+        return stageList.stream().mapToInt(o -> o.index).toArray();
     }
 
-    class StageAndFailRate implements Comparable<StageAndFailRate> {
-        private int stage;
-        private double failRate;
+    static class Stage implements Comparable<Stage> {
+        private final int index;
+        private final double rate;
 
-        private StageAndFailRate(int stage, double failRate) {
-            this.stage = stage;
-            this.failRate = failRate;
+        private Stage(int index, int failUsers, int totalUsers) {
+            this.index = index;
+            if (totalUsers == 0) {
+                rate = 0;
+            } else {
+                rate = (double) failUsers / totalUsers;
+            }
         }
 
         @Override
-        public int compareTo(StageAndFailRate o) {
-            if (this.failRate < o.failRate) {
-                return 1;
-            } else if (this.failRate > o.failRate) {
-                return -1;
-            } else {
-                if (this.stage > o.stage) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            }
+        public int compareTo(Stage o) {
+            return rate != o.rate ? Double.compare(o.rate, rate) : Integer.compare(index, o.index);
         }
     }
 }

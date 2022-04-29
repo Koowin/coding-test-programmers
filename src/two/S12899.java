@@ -8,7 +8,7 @@ package two;
 public class S12899 {
     public String solution(int n) {
         StringBuilder answer = new StringBuilder();
-        String[] numbers = {"4", "1", "2"};
+        char[] numbers = {'4', '1', '2'};
 
         while (n > 0) {
             int remainder = n % 3;
@@ -18,6 +18,7 @@ public class S12899 {
                 n--;
             }
         }
+
         return answer.reverse().toString();
     }
 }
