@@ -8,95 +8,58 @@ package two;
 import java.util.*;
 
 public class S17677 {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         S17677 s = new S17677();
         String str1 = "handshake";
         String str2 = "shake hands";
         System.out.println(s.solution(str1, str2));
     }
 
-    public int solution(String str1, String str2){
-        final int MUL = 65536;
+    public int solution(String str1, String str2) {
+        str1 = str1.toUpperCase();
+        str2 = str2.toUpperCase();
+        String[] arr1 = str1.split("[^A-Z]");
+        String[] arr2 = str2.split("[^A-Z]");
 
-        JacquardSet j1 = new JacquardSet();
-        JacquardSet j2 = new JacquardSet();
-
-        for(int i=0, len=str1.length()-1;i<len;i++){
-            j1.add(str1.substring(i,i+2));
+        JacquardSet s1 = new JacquardSet();
+        JacquardSet s2 = new JacquardSet();
+        for (String str : arr1) {
+            s1.add(str);
         }
-        for(int i=0, len=str2.length()-1;i<len;i++){
-            j2.add(str2.substring(i,i+2));
+        for (String str : arr2) {
+            s2.add(str);
         }
 
-        double answer = j1.getSimilarValue(j2);
-        answer *= MUL;
-
-        return (int) answer;
+        int intersectionCount = JacquardSet.intersectionCount(s1, s2);
+        int unionCount = s1.count + s2.count - intersectionCount;
+        if (unionCount == 0) {
+            return 65536;
+        }
+        return intersectionCount * 65536 / unionCount;
     }
-}
 
-class JacquardSet {
-    private Map<Item, Integer> map = new HashMap<>();
+    static class JacquardSet {
+        private Map<String, Integer> map = new HashMap<>();
+        private int count = 0;
 
-    public void add(String str){
-        if(str.matches("[a-zA-Z]{2}")){
-            Item i = new Item(str.toLowerCase());
-            if(map.containsKey(i)){
-                map.put(i, map.get(i) + 1);
+        private void add(String str) {
+            if (str.length() < 2) {
+                return;
             }
-            else{
-                map.put(i, 1);
+            for (int i = 0; i < str.length() - 1; i++) {
+                String key = str.substring(i, i + 2);
+                map.put(key, map.getOrDefault(key, 0) + 1);
             }
+            count += str.length() - 1;
         }
-    }
 
-    public double getSimilarValue(JacquardSet o){
-        int intersectionCount = getIntersectionCount(o);
-        int unionCount = getSum() + o.getSum() - intersectionCount;
-        if(unionCount == 0){
-            return 0;
-        }
-        return (double) intersectionCount / unionCount;
-    }
-
-    private int getSum(){
-        int count = 0;
-        Set<Item> keys = map.keySet();
-        for(Item i : keys){
-            count += map.get(i);
-        }
-        return count;
-    }
-
-    private int getIntersectionCount(JacquardSet o){
-        int count = 0;
-        Set<Item> keys = map.keySet();
-        for(Item i : keys){
-            if(o.map.containsKey(i)){
-                count += Math.min(map.get(i), o.map.get(i));
+        private static int intersectionCount(JacquardSet s1, JacquardSet s2) {
+            int count = 0;
+            for (Map.Entry<String, Integer> entry : s1.map.entrySet()) {
+                int i = s2.map.getOrDefault(entry.getKey(), 0);
+                count += Math.min(i, entry.getValue());
             }
-        }
-        return count;
-    }
-
-    static class Item {
-        final String str;
-
-        public Item(String str) {
-            this.str = str;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof Item)) {
-                return false;
-            }
-            return str.equals(((Item) o).str);
-        }
-
-        @Override
-        public int hashCode() {
-            return str.hashCode();
+            return count;
         }
     }
 }
