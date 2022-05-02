@@ -5,74 +5,71 @@
 package two;
 
 public class S60058 {
+    private static char OPEN_BRACKET = '(';
+    private static char CLOSE_BRACKET = ')';
+
     public String solution(String p) {
-        return dq(p);
+        return makeBracket(p);
     }
 
-    private boolean checkRight(String p){
-        int count = 0;
-        char[] arr = p.toCharArray();
-        for(char c : arr){
-            if(c == '('){
-                count++;
+    private String makeBracket(String original) {
+        if (original.length() == 0) {
+            return original;
+        }
+        int balanceIndex = getBalanceIndex(original);
+        String u = original.substring(0, balanceIndex);
+        String v = original.substring(balanceIndex);
+
+        if (isRightBracket(u)) {
+            return u + makeBracket(v);
+        }
+        StringBuilder ret = new StringBuilder();
+        ret.append(OPEN_BRACKET);
+        ret.append(makeBracket(v));
+        ret.append(CLOSE_BRACKET);
+
+        StringBuilder uStringBuilder = new StringBuilder(u.substring(1, u.length() - 1));
+        for (int i = 0; i < uStringBuilder.length(); i++) {
+            if (uStringBuilder.charAt(i) == OPEN_BRACKET) {
+                uStringBuilder.setCharAt(i, CLOSE_BRACKET);
+            } else {
+                uStringBuilder.setCharAt(i, OPEN_BRACKET);
             }
-            else{
-                count--;
+        }
+        ret.append(uStringBuilder);
+        return ret.toString();
+    }
+
+    private int getBalanceIndex(String original) {
+        int sum;
+        if (original.charAt(0) == OPEN_BRACKET) {
+            sum = 1;
+        } else {
+            sum = -1;
+        }
+        int i = 1;
+        while (sum != 0) {
+            if (original.charAt(i++) == OPEN_BRACKET) {
+                sum += 1;
+            } else {
+                sum -= 1;
             }
-            if(count < 0){
+        }
+        return i;
+    }
+
+    private boolean isRightBracket(String str) {
+        int sum = 0;
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == OPEN_BRACKET) {
+                sum += 1;
+            } else {
+                sum -= 1;
+            }
+            if (sum < 0) {
                 return false;
             }
         }
         return true;
-    }
-
-    private int getIndexOfV(String p){
-        int a=0, b=0;
-        char[] arr = p.toCharArray();
-        for(int i=0;i<arr.length;i++){
-            if(arr[i] == '('){
-                a++;
-            }
-            else{
-                b++;
-            }
-            if(a==b){
-                return i+1;
-            }
-        }
-        return arr.length;
-    }
-
-    private String dq(String p){
-        int len = p.length();
-        if(len == 0){
-            return "";
-        }
-        int index = getIndexOfV(p);
-        String u = p.substring(0, index);
-        String v = p.substring(index, len);
-
-        if(checkRight(u)){
-            return u + dq(v);
-        }
-        else{
-            return "(" + dq(v) + ")" + reverseBracket(u.substring(1, u.length()-1));
-        }
-    }
-
-    private String reverseBracket(String p){
-        char L = '(';
-        char R = ')';
-        char[] arr = p.toCharArray();
-
-        for(int i=0;i<arr.length;i++){
-            if(arr[i] == L){
-                arr[i] = R;
-            }
-            else{
-                arr[i] = L;
-            }
-        }
-        return new String(arr);
     }
 }

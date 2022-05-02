@@ -1,6 +1,6 @@
 /*
-    https://programmers.co.kr/learn/courses/30/lessons/72411
     메뉴 리뉴얼
+    https://programmers.co.kr/learn/courses/30/lessons/72411
  */
 
 package two;
@@ -8,112 +8,91 @@ package two;
 import java.util.*;
 
 public class S72411 {
-    private Menu[] orders;
-    private List<Integer> answerList = new ArrayList<>();
-
-    public static void main(String[] args) {
-        S72411 s = new S72411();
-        String[] input1 = new String[]{"ABCFG", "AC", "CDE", "ACDE", "BCFG", "ACDEH"};
-        int[] input2 = new int[]{2, 3, 4};
-
-        String[] result = s.solution(input1, input2);
-        System.out.println(Arrays.toString(result));
-    }
 
     public String[] solution(String[] orders, int[] course) {
-        makeOrders(orders);
-
-        for (int menuCount : course) {
-            findAndAddAnswer(menuCount);
+        Menu.initMenuList(course);
+        for (String order : orders) {
+            for (Menu m : Menu.menuList) {
+                m.makeSubMenu(order);
+            }
         }
-
-        String[] ret = new String[answerList.size()];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = Menu.intToStringMenu(answerList.get(i));
+        List<String> answer = new ArrayList<>();
+        for (Menu m : Menu.menuList) {
+            m.addMaxSubMenus(answer);
         }
-        Arrays.sort(ret);
+        Collections.sort(answer);
+        String[] ret = new String[answer.size()];
+        int i = 0;
+        for (String str : answer) {
+            ret[i++] = str;
+        }
         return ret;
     }
 
-    private void makeOrders(String[] orders) {
-        this.orders = new Menu[orders.length];
+    static class Menu {
+        private static List<Menu> menuList = new ArrayList<>();
 
-        for (int i = 0; i < orders.length; i++) {
-            this.orders[i] = new Menu(orders[i]);
-        }
-    }
+        private final int menuCount;
+        private Map<Integer, Integer> menuMap = new HashMap<>();
 
-    private void findAndAddAnswer(int menuCount) {
-        Set<Integer> subMenuSet = new HashSet<>();
-
-        for (Menu m : orders) {
-            m.addSubMenuToSet(subMenuSet, menuCount);
+        private Menu(int menuCount) {
+            this.menuCount = menuCount;
         }
 
-        addMaxCountSubMenus(subMenuSet);
-    }
-
-    private void addMaxCountSubMenus(Set<Integer> subMenuSet) {
-        int max = 2;
-        Set<Integer> answerCandidate = new HashSet<>();
-        for (int subMenu : subMenuSet) {
-            int count = 0;
-            for (Menu m : orders) {
-                if (Menu.isContain(m, subMenu)) {
-                    count++;
-                }
-            }
-
-            if (count > max) {
-                answerCandidate.clear();
-                answerCandidate.add(subMenu);
-                max = count;
-            } else if (count == max) {
-                answerCandidate.add(subMenu);
+        private static void initMenuList(int[] course) {
+            for (int i : course) {
+                menuList.add(new Menu(i));
             }
         }
-        answerList.addAll(answerCandidate);
-    }
 
-    private static class Menu {
-        private final int menu;
-
-        private Menu(String strMenu) {
-            menu = stringToIntMenu(strMenu);
-        }
-
-        private static int stringToIntMenu(String strMenu) {
-            char A = 'A';
+        private static int parseInt(String order) {
             int ret = 0;
-            for (int i = 0; i < strMenu.length(); i++) {
-                int diff = strMenu.charAt(i) - A;
-                ret += 1 << diff;
+            for (int i = 0; i < order.length(); i++) {
+                ret |= 1 << (order.charAt(i) - 'A');
             }
             return ret;
         }
 
-        private static String intToStringMenu(int intMenu) {
-            char c = 'A';
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while (intMenu > 0) {
-                if (intMenu % 2 == 1) {
-                    stringBuilder.append(c);
+        private static String parseString(int order) {
+            StringBuilder ret = new StringBuilder();
+            for (int i = 0; i < 26; i++) {
+                if ((order & 1 << i) != 0) {
+                    ret.append((char) ('A' + i));
                 }
-                c++;
-                intMenu /= 2;
             }
-            return stringBuilder.toString();
+            return ret.toString();
         }
 
-        private static boolean isContain(Menu m, int subMenu) {
-            return (m.menu & subMenu) == subMenu;
+        private void makeSubMenu(String order) {
+            int intOrder = parseInt(order);
+            subMenu(intOrder, -1, 0, 0);
         }
 
-        private void addSubMenuToSet(Set<Integer> subMenuSet, int count) {
-            for (int subMenu = menu; subMenu > 0; subMenu = (subMenu - 1) & menu) {
-                if (Integer.bitCount(subMenu) == count) {
-                    subMenuSet.add(subMenu);
+        private void subMenu(int order, int lastSelected, int set, int count) {
+            if (count == this.menuCount) {
+                menuMap.put(set, menuMap.getOrDefault(set, 0) + 1);
+                return;
+            }
+            for (int i = lastSelected + 1; i < 26; i++) {
+                if ((order & 1 << i) != 0) {
+                    subMenu(order, i, set | 1 << i, count + 1);
+                }
+            }
+        }
+
+        private void addMaxSubMenus(List<String> answer) {
+            int max = 1;
+            for (int i : menuMap.values()) {
+                if (max < i) {
+                    max = i;
+                }
+            }
+            if (max < 2) {
+                return;
+            }
+            for (Map.Entry<Integer, Integer> e : menuMap.entrySet()) {
+                if (e.getValue() == max) {
+                    answer.add(parseString(e.getKey()));
                 }
             }
         }
