@@ -13,8 +13,6 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        Pattern pattern = Pattern.compile("\\d+[SDT][*#]?");
-        Matcher matcher = pattern.matcher("1S#2D*3T");
-        matcher.group();
+        System.out.println(Arrays.toString("20s".split("[s\\.]")));
     }
 }

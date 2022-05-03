@@ -17,11 +17,10 @@ public class S81302 {
     }
 
     static class Checker{
-        private final char CH_P = 'P';
-        private final char CH_O = 'O';
-        private final char CH_X = 'X';
-        char[][] place = new char[5][5];
-        int I, J;
+        private static final char CH_P = 'P';
+        private static final char CH_X = 'X';
+        private char[][] place = new char[5][5];
+        private int I, J;
 
         Checker(String[] input){
             for(int i=0;i<TABLE_SIZE;i++){
