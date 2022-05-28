@@ -5,7 +5,8 @@ import two.*;
 
 public class Main {
     public static void main(String[] args) {
-        printBracketToBrace("[[1,0,0,1,1,0],[1,0,1,0,1,0],[0,1,1,0,1,1],[0,0,1,0,0,0],[1,1,0,1,1,0],[0,1,0,0,0,0]]");
+        printBracketToBrace(
+                "[[2,2],[1,4],[3,2]]");
     }
 
     private static void printBracketToBrace(String input){

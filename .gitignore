@@ -1,5 +1,3 @@
 out/
 .DS_Store
-src/internship/
-src/naver/
-src/kakaopay/
+src/codingtest/*
