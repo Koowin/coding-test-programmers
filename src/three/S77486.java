@@ -7,50 +7,50 @@ package three;
 import java.util.*;
 
 public class S77486 {
-    Map<String, Seller> sellers = new HashMap<>();
+    private Map<String, Person> map = new LinkedHashMap<>();
 
     public int[] solution(String[] enroll, String[] referral, String[] seller, int[] amount) {
-        sellers.put("-", new Seller());
+        initMap(enroll, referral);
 
-        for (String str : enroll) {
-            sellers.put(str, new Seller());
+        for(int i=0;i<seller.length;i++){
+            Person p = map.get(seller[i]);
+            p.addIncome(amount[i] * 100);
         }
 
-        for (int i=0;i<enroll.length;i++) {
-            Seller child = sellers.get(enroll[i]);
-            Seller parent = sellers.get(referral[i]);
-            child.setParent(parent);
-        }
+        map.remove("-");
+        int[] answer = map.values().stream().mapToInt(Person::getIncome).toArray();
 
-        int cost = 100;
-        for (int i=0;i<seller.length;i++) {
-            sellers.get(seller[i]).addIncome(amount[i] * cost);
-        }
-
-        int[] answer = new int[enroll.length];
-        for (int i=0;i<enroll.length;i++) {
-            answer[i] = sellers.get(enroll[i]).income;
-        }
         return answer;
     }
 
-    static class Seller {
-        private static final int DIVIDER = 10;
+    private void initMap(String[] enroll, String[] referral){
+        map.put("-", new Person(null));
 
-        List<Seller> children = new ArrayList<>();
-        private Seller parent;
+        for(int i=0;i<enroll.length;i++){
+            Person p = new Person(map.get(referral[i]));
+            map.put(enroll[i], p);
+        }
+    }
+
+    static class Person {
+        private final Person parent;
         private int income = 0;
 
-        private void setParent(Seller parent) {
+        private Person(Person parent){
             this.parent = parent;
         }
 
-        private void addIncome(int n) {
-            int fee = n / DIVIDER;
-            income += n - fee;
-            if (fee > 0 && parent != null) {
+        private void addIncome(int n){
+            int fee = n / 10;
+            income += (n - fee);
+
+            if(fee > 0 && parent != null){
                 parent.addIncome(fee);
             }
+        }
+
+        private int getIncome(){
+            return income;
         }
     }
 }

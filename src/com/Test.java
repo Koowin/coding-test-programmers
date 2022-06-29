@@ -13,9 +13,15 @@ public class Test {
         Deque<Integer> deque = new LinkedList<>();
         Set<Integer> set = new HashSet<>();
 
-        list.add(1);
-        list.add(2);
-        list.add(list.remove(0));
-        System.out.println(list);
+        System.out.println(map.putIfAbsent("1", 1));
+        System.out.println(map.computeIfAbsent("2", k -> 2));
+
+        Iterator<Integer> iter = list.iterator();
+
+        iter.remove();
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+
+        }
     }
+
 }
