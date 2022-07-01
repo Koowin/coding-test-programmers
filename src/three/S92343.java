@@ -7,55 +7,86 @@ package three;
 import java.util.*;
 
 public class S92343 {
-    public static void main(String[] args) {
-        S92343 s = new S92343();
-        int[] info = {0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1};
-        int[][] edges = {{0, 1}, {1, 2}, {1, 4}, {0, 8}, {8, 7}, {9, 10}, {9, 11}, {4, 3}, {6, 5}, {4, 6}, {8, 9}};
-        System.out.println(s.solution(info, edges));
-    }
 
-    private int[] info;
-    private List<Integer>[] edges;
+  private Node[] nodes;
 
-    public int solution(int[] info, int[][] edges) {
-        this.info = info;
-        initEdges(info.length, edges);
+  public int solution(int[] info, int[][] edges) {
+    Node.initNodes(info);
+    Node.initEdges(edges);
 
-        return dfs(0, 0, 0, 1);
-    }
+    return Node.nodes[0].dfs(1, 0, 0);
+  }
 
-    private void initEdges(int len, int[][] edges) {
-        this.edges = new List[len];
-        for (int i = 0; i < len; i++) {
-            this.edges[i] = new ArrayList<>();
-        }
 
-        for (int[] edge : edges) {
-            this.edges[edge[0]].add(edge[1]);
-        }
-    }
+  static class Node {
 
-    private int dfs(int sheep, int wolf, int visit, int nextVisitSet) {
-        if (info[visit] == 0) {
-            sheep++;
+    private static Node[] nodes;
+
+    private final int index;
+    private final Type type;
+    private List<Node> children = new ArrayList<>();
+
+    private static void initNodes(int[] info) {
+      nodes = new Node[info.length];
+      for (int i = 0; i < info.length; i++) {
+        Type type;
+        if (info[i] == 0) {
+          type = Type.SHEEP;
         } else {
-            wolf++;
+          type = Type.WOLF;
         }
-        if (sheep <= wolf) {
-            return 0;
-        }
-
-        nextVisitSet ^= 1 << visit;
-        for (int child : edges[visit]) {
-            nextVisitSet |= 1 << child;
-        }
-
-        int ret = sheep;
-        for (int i = 0, offset = 1; i < info.length; i++, offset <<= 1) {
-            if ((nextVisitSet & offset) != 0) {
-                ret = Math.max(ret, dfs(sheep, wolf, i, nextVisitSet));
-            }
-        }
-        return ret;
+        nodes[i] = new Node(i, type);
+      }
     }
+
+    private static void initEdges(int[][] edges) {
+      for (int[] edge : edges) {
+        Node parent = nodes[edge[0]];
+        Node child = nodes[edge[1]];
+        parent.addChild(child);
+      }
+    }
+
+    private Node(int index, Type type) {
+      this.index = index;
+      this.type = type;
+    }
+
+    private void addChild(Node n) {
+      children.add(n);
+    }
+
+    private int dfs(int bits, int sheepSum, int wolfSum) {
+
+      if (type == Type.SHEEP) {
+        sheepSum += 1;
+      } else {
+        wolfSum += 1;
+      }
+
+      if (sheepSum <= wolfSum) {
+        return sheepSum;
+      }
+
+      bits ^= (1 << index);
+
+      for (Node child : children) {
+        bits |= (1 << child.index);
+      }
+
+      int ret = sheepSum;
+
+      for (int i = 0, offset = 1; i < nodes.length; i++, offset <<= 1) {
+        if ((bits & offset) != 0) {
+          Node next = nodes[i];
+          ret = Math.max(ret, next.dfs(bits, sheepSum, wolfSum));
+        }
+      }
+      return ret;
+    }
+  }
+
+  enum Type {
+    SHEEP, WOLF;
+  }
 }

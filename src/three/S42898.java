@@ -5,46 +5,33 @@
 package three;
 
 public class S42898 {
-    public int solution(int m, int n, int[][] puddles) {
-        PathCounter counter = new PathCounter(m, n);
-        counter.setPuddles(puddles);
-        
-        return counter.countPath();
+
+  private static final int MOD = 1_000_000_007;
+  private int[][] cache;
+
+  public int solution(int m, int n, int[][] puddles) {
+    cache = new int[m + 1][n + 1];
+    cache[1][0] = 1;
+
+    for (int[] puddle : puddles) {
+      cache[puddle[0]][puddle[1]] = -1;
     }
 
-    static class PathCounter {
-        private final int columnSize;
-        private final int rowSize;
-
-        private int[][] townMap;
-        private boolean[][] puddles;
-
-        private PathCounter(int m, int n) {
-            columnSize = n + 1;
-            rowSize = m + 1;
-
-            townMap = new int[rowSize][columnSize];
-            puddles = new boolean[rowSize][columnSize];
+    for (int i = 1; i <= m; i++) {
+      for (int j = 1; j <= n; j++) {
+        if (cache[i][j] != -1) {
+          if (cache[i - 1][j] != -1) {
+            cache[i][j] += cache[i - 1][j];
+            cache[i][j] %= MOD;
+          }
+          if (cache[i][j - 1] != -1) {
+            cache[i][j] += cache[i][j - 1];
+            cache[i][j] %= MOD;
+          }
         }
-
-        private void setPuddles(int[][] puddleLocation) {
-            for (int[] puddle : puddleLocation) {
-                puddles[puddle[0]][puddle[1]] = true;
-            }
-        }
-
-        private int countPath() {
-            final int divider = 1000000007;
-            townMap[1][0] = 1;
-            for (int i = 1; i < rowSize; i++) {
-                for (int j = 1; j < columnSize; j++) {
-                    if(!puddles[i][j]) {
-                        townMap[i][j] = (townMap[i-1][j] + townMap[i][j-1]) % divider;
-                    }
-                }
-            }
-
-            return townMap[rowSize-1][columnSize-1];
-        }
+      }
     }
+
+    return cache[m][n];
+  }
 }
