@@ -8,55 +8,51 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class S64064 {
-    public static void main(String[] args) {
-        String[] userId = {"12345", "12453", "aaaaa"};
-        String[] bannedId = {"*****", "*****"};
-        S64064 s = new S64064();
-
-        System.out.println(s.solution(userId, bannedId));
-    }
-
-    private static final char STAR = '*';
-
-    private int userSize;
-    private int[] possibleSet;
-    private Set<Integer> answer = new HashSet<>();
+    private int userCount;
+    private int[] banCandidates;
+    private Set<Integer> combinationSet = new HashSet<>();
 
     public int solution(String[] user_id, String[] banned_id) {
-        userSize = user_id.length;
-        possibleSet = new int[banned_id.length];
-        for (int i = 0; i < banned_id.length; i++) {
-            for (int j = 0; j < user_id.length; j++) {
-                if (isMatch(user_id[j], banned_id[i])) {
-                    possibleSet[i] |= 1<<j;
+        userCount = user_id.length;
+        banCandidates = new int[banned_id.length];
+
+        for(int i=0;i<banned_id.length;i++) {
+            for(int j=0;j<user_id.length;j++) {
+                if(isCandidate(user_id[j], banned_id[i])) {
+                    banCandidates[i] += (1 << j);
                 }
             }
         }
-        combination(0, 0);
 
-        return answer.size();
+        cur(0, 0);
+
+        return combinationSet.size();
     }
 
-    private boolean isMatch(String user, String banned) {
-        if (user.length() != banned.length()) {
+    private static final char WILD_CARD = '*';
+    private static boolean isCandidate(String user, String ban) {
+        if (user.length() != ban.length()) {
             return false;
         }
-        for (int i = 0; i < user.length(); i++) {
-            if (banned.charAt(i) != STAR && user.charAt(i) != banned.charAt(i)) {
+
+        for(int i=0;i<user.length();i++) {
+            if(ban.charAt(i) != WILD_CARD && user.charAt(i) != ban.charAt(i)) {
                 return false;
             }
         }
+
         return true;
     }
 
-    private void combination(int depth, int used) {
-        if (depth == possibleSet.length) {
-            answer.add(used);
+    private void cur(int index, int combination) {
+        if(index == banCandidates.length) {
+            combinationSet.add(combination);
             return;
         }
-        for (int i = 0, offset = 1; i < userSize; i++, offset <<= 1) {
-            if ((possibleSet[depth] & offset) == offset && (used & offset) != offset) {
-                combination(depth + 1, used | offset);
+
+        for(int i=0, offset=1;i<userCount;i++, offset <<= 1) {
+            if( (banCandidates[index] & offset) != 0 && (combination & offset) == 0 ) {
+                cur(index + 1, combination | offset);
             }
         }
     }

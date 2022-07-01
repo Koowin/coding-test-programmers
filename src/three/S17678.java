@@ -7,104 +7,99 @@ package three;
 import java.util.*;
 
 public class S17678 {
+    private Bus[] busList;
+    private List<Crew> crewList = new ArrayList<>();
+
     public String solution(int n, int t, int m, String[] timetable) {
-        BusStop bs = new BusStop(n, t, m);
+        initBusList(n, t, m);
+        initCrewList(timetable);
 
-        int[] intTimeTable = Arrays.stream(timetable).mapToInt(S17678::parseTimeStringToInt).sorted().toArray();
-
-        for (int time : intTimeTable) {
-            if (!bs.addPassenger(time)) {
-                break;
+        int index = 0;
+        for(Crew c : crewList) {
+            while(index < n && !busList[index].addCrew(c)){
+                index++;
             }
         }
 
-        int intAnswerTime = bs.getMostLateTimeToTakeBus();
+        int answerTime;
 
+        if(busList[n-1].remainSeats > 0) {
+            answerTime = busList[n-1].arriveTime;
+        } else {
+            answerTime = busList[n-1].lastCrew.arriveTime - 1;
+        }
 
-        return parseTimeIntToString(intAnswerTime);
+        return makeTime(answerTime);
     }
 
-    private static int parseTimeStringToInt(String strTime) {
-        String[] arr = strTime.split(":");
-        int hour = Integer.parseInt(arr[0]);
-        int min = Integer.parseInt(arr[1]);
+    private void initBusList(int n, int t, int m) {
+        busList = new Bus[n];
+        Bus.cap = m;
 
-        return hour * 60 + min;
-    }
+        int time = 540;
 
-    private static String parseTimeIntToString(int intTime) {
-        int hour = intTime / 60;
-        int min = intTime % 60;
-
-        return String.format("%02d:%02d", hour, min);
-    }
-
-}
-
-class BusStop {
-    private ShuttleBus[] busList;
-    private int busIndex = 0;
-
-    public BusStop(int n, int t, int m) {
-        int busArriveTime = 9 * 60;
-
-        busList = new ShuttleBus[n];
-        for (int i = 0; i < n; i++) {
-            busList[i] = new ShuttleBus(m, busArriveTime);
-            busArriveTime += t;
+        for(int i=0;i<n;i++) {
+            Bus b = new Bus(time);
+            busList[i] = b;
+            time += t;
         }
     }
 
-    public boolean addPassenger(int passengerTime){
-        if (busList[busIndex].canTakeBus(passengerTime)) {
-            busList[busIndex].addPassenger(passengerTime);
-            return true;
+    private void initCrewList(String[] timetable) {
+        for(String str : timetable) {
+            crewList.add(new Crew(parseTime(str)));
         }
-        while (++busIndex < busList.length && !busList[busIndex].canTakeBus(passengerTime));
-        if (busIndex < busList.length) {
-            busList[busIndex].addPassenger(passengerTime);
-            return true;
-        }
-        return false;
+        Collections.sort(crewList);
     }
 
-    public int getMostLateTimeToTakeBus () {
-        int time = 0;
+    private static final int MIN_PER_HOUR = 60;
+    private static int parseTime(String str) {
+        String[] arr = str.split(":");
+        int ret = 0;
+        ret += Integer.parseInt(arr[0]) * MIN_PER_HOUR;
+        ret += Integer.parseInt(arr[1]);
 
-        ShuttleBus b = busList[busList.length - 1];
-
-        if (b.isHaveEmptySeat()) {
-            time = b.busArriveTime;
-        }
-        else {
-            time = b.lastPassengerTime - 1;
-        }
-
-        return time;
+        return ret;
     }
 
-    static class ShuttleBus {
-        private final int passengerLimit;
-        private final int busArriveTime;
-        private int passengerCount = 0;
-        private int lastPassengerTime = 0;
+    private static final String format = "%02d:%02d";
+    private static String makeTime(int t) {
+        int hour = t / MIN_PER_HOUR;
+        int min = t % MIN_PER_HOUR;
+        return String.format(format, hour, min);
+    }
 
-        ShuttleBus(int passengerLimit, int busArriveTime) {
-            this.passengerLimit = passengerLimit;
-            this.busArriveTime = busArriveTime;
+    private static class Crew implements Comparable<Crew>{
+        private final int arriveTime;
+
+        private Crew(int arriveTime) {
+            this.arriveTime = arriveTime;
         }
 
-        private boolean canTakeBus(int passengerTime) {
-            return passengerTime <= busArriveTime && passengerCount < passengerLimit;
+        @Override
+        public int compareTo(Crew c){
+            return Integer.compare(arriveTime, c.arriveTime);
+        }
+    }
+
+    private static class Bus {
+        private static int cap;
+        private final int arriveTime;
+        private int remainSeats;
+        private Crew lastCrew;
+
+        private Bus(int arriveTime){
+            this.arriveTime = arriveTime;
+            remainSeats = cap;
         }
 
-        private void addPassenger(int passengerTime) {
-            passengerCount++;
-            lastPassengerTime = passengerTime;
-        }
-
-        private boolean isHaveEmptySeat() {
-            return passengerCount < passengerLimit;
+        private boolean addCrew(Crew crew) {
+            if(remainSeats > 0 && crew.arriveTime <= arriveTime) {
+                remainSeats--;
+                lastCrew = crew;
+                return true;
+            }
+            return false;
         }
     }
 }
